@@ -69,6 +69,7 @@ const config = {
         patterns: [
           "@/features/*/*",
           "@/types/*",
+          "@/libs/*",
           "@/config/*",
           "@/constants/*",
           "@/providers/*",
