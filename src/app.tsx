@@ -4,6 +4,7 @@ import { useEventListener } from "ahooks";
 
 import { Clip } from "@/components/track";
 
+import { AsideGrid } from "./components/aside-grid";
 import { genID } from "./lib/utils";
 import { useTimelineStore } from "./store";
 import { type ClipType } from "./types";
@@ -14,6 +15,9 @@ const App = () => {
   const setTrackData = useTimelineStore((state) => state.setTrackData);
   const startTrackID = useTimelineStore((state) => state.startTrackID);
   const endTrackID = useTimelineStore((state) => state.endTrackID);
+  const needNewTrack = useTimelineStore((state) => state.needNewTrack);
+  const setNeedNewTrack = useTimelineStore((state) => state.setNeedNewTrack);
+
   // const setEndTrackID = useTimelineStore((state) => state.setEndTrackID);
 
   const trackContainerRef = React.useRef<HTMLDivElement | null>(null);
@@ -38,6 +42,18 @@ const App = () => {
   useEventListener(
     "drop",
     (e: React.MouseEvent<HTMLDivElement>) => {
+      if (needNewTrack) {
+        setTrackData(genID(), [
+          {
+            id: genID(),
+            width: 200,
+            translateX: 0,
+          },
+        ]);
+        setNeedNewTrack(false);
+        return;
+      }
+
       if (startTrackID && endTrackID) {
         return;
       }
@@ -63,7 +79,9 @@ const App = () => {
 
   return (
     <main className="flex size-full h-screen">
-      <aside className="h-full w-[200px] border-r "></aside>
+      <aside className="flex h-full w-[200px] justify-center border-r pt-9">
+        <AsideGrid />
+      </aside>
       <section className="flex  flex-1 flex-col justify-end ">
         <div className="h-screen border-t p-9" ref={trackContainerRef}>
           <div className="grid grid-cols-1 gap-y-4">

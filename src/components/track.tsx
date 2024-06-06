@@ -35,7 +35,8 @@ export const Clip = ({ id }: ClipProps) => {
   const moveBlockRef = React.useRef<string>("");
 
   // clip 的宽度是否可以左右拖动
-  const enableClipWidthDragRef = React.useRef(false);
+  const [enableClipWidthDrag, setClipWidthDrag] = React.useState(false);
+
   // clip ref
   const clipRef = React.useRef<HTMLDivElement | null>(null);
   // clip 是否可以左右拖动
@@ -45,9 +46,9 @@ export const Clip = ({ id }: ClipProps) => {
   const trackRef = React.useRef<HTMLDivElement | null>(null);
 
   const handleReset = () => {
-    enableClipWidthDragRef.current = false;
     moveBlockRef.current = "";
     setClipTranslate(false);
+    setClipWidthDrag(false);
   };
 
   useEventListener(
@@ -68,7 +69,7 @@ export const Clip = ({ id }: ClipProps) => {
         }
 
         // 开启拖拽，允许左右进行拖拽，修改 clip 的宽度
-        enableClipWidthDragRef.current = true;
+        setClipWidthDrag(true);
         moveBlockRef.current = target.dataset.position || "";
       }
 
@@ -90,7 +91,7 @@ export const Clip = ({ id }: ClipProps) => {
       const { left: clipLeft } = getRect(clipRef);
 
       // 允许左右进行拖拽时才进行后续处理
-      if (enableClipWidthDragRef.current) {
+      if (enableClipWidthDrag) {
         const copied = [...trackData];
 
         const current = copied.findIndex((el) => el.id === currentClipID);
@@ -295,8 +296,8 @@ export const Clip = ({ id }: ClipProps) => {
             width: el.width,
             transform: `translateX(${el.translateX}px)`,
           }}
+          draggable={!enableClipWidthDrag}
           ref={clipRef}
-          draggable
         >
           <WestMoveBlock clipID={el.id} />
           <EastMoveBlock clipID={el.id} />
