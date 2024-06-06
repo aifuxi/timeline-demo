@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
+import { nanoid } from "nanoid";
 import { twMerge } from "tailwind-merge";
 
 export const cn = (...inputs: ClassValue[]) => {
@@ -14,4 +15,8 @@ export const getRect = (ref: React.MutableRefObject<HTMLDivElement | null>) => {
     width: rect?.width ?? 0,
     height: rect?.height ?? 0,
   };
+};
+
+export const genID = () => {
+  return nanoid();
 };
