@@ -18,11 +18,11 @@ export const AsideGrid = () => {
 
   return (
     <div
-      className="grid size-[80px] place-content-center rounded border"
+      className="grid size-[200px] place-content-center rounded border p-4 text-sm"
       draggable
       ref={gridRef}
     >
-      mock
+      拖拽我到右侧底部可以新增一个轨道
     </div>
   );
 };

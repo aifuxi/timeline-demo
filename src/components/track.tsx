@@ -29,6 +29,11 @@ export const Clip = ({ id }: ClipProps) => {
   const startTrackID = useTimelineStore((state) => state.startTrackID);
   const setEndTrackID = useTimelineStore((state) => state.setEndTrackID);
 
+  const firstMouseDownX = useTimelineStore((state) => state.firstMouseDownX);
+  const setFirstMouseDownX = useTimelineStore(
+    (state) => state.setFirstMouseDownX,
+  );
+
   // 鼠标移动时上次的坐标
   const mouseDownXRef = React.useRef(0);
 
@@ -57,6 +62,8 @@ export const Clip = ({ id }: ClipProps) => {
       const target = e.target as HTMLElement;
 
       setCurrentClipID(target.dataset.clipid || "");
+
+      setFirstMouseDownX(e.clientX);
 
       if (target.dataset.drag === DRAG_TYPE_CHANGE_WIDTH) {
         const trackWidth = getRect(trackRef).width;
@@ -182,20 +189,21 @@ export const Clip = ({ id }: ClipProps) => {
       const { width: trackWidth, left: trackLeft } = getRect(trackRef);
       const { width: clipWidth } = getRect(clipRef);
 
-      if (startTrackID !== endTrackID) {
+      // 跨轨道拖拽
+      if (startTrackID && endTrackID && startTrackID !== endTrackID) {
         // 此次鼠标移动的距离 = 当前鼠标位置 - 上一次鼠标位置（第一次为鼠标按下的位置）
-        const offset = e.clientX - mouseDownXRef.current;
+        const offset = e.clientX - firstMouseDownX;
 
         // clip 最大平移动距离
         const clipMaxTranslateX = trackWidth - clipWidth;
 
-        const startStackData = trackDatas[startTrackID!];
-        const endStackData = trackDatas[endTrackID!];
+        const startStackData = trackDatas[startTrackID];
+        const endStackData = trackDatas[endTrackID];
 
         const current = startStackData.find((el) => el.id === currentClipID)!;
 
         setTrackData(
-          startTrackID!,
+          startTrackID,
           startStackData.filter((el) => el.id !== currentClipID),
         );
 
@@ -204,32 +212,32 @@ export const Clip = ({ id }: ClipProps) => {
         // 如果拖拽的距离小于 trackLeft 说明拖到最左边了
         if (e.clientX - trackLeft <= 0) {
           current.translateX = 0;
-          setTrackData(endTrackID!, [...endStackData, current]);
+          setTrackData(endTrackID, [...endStackData, current]);
           return;
         }
 
         if (e.clientX - trackLeft >= clipMaxTranslateX) {
           current.translateX = clipMaxTranslateX;
-          setTrackData(endTrackID!, [...endStackData, current]);
+          setTrackData(endTrackID, [...endStackData, current]);
           return;
         }
 
         // clip 最小平移动距离
         if (translateX + offset <= 0) {
           current.translateX = 0;
-          setTrackData(endTrackID!, [...endStackData, current]);
+          setTrackData(endTrackID, [...endStackData, current]);
           return;
         }
 
         if (translateX + offset >= clipMaxTranslateX) {
           current.translateX = clipMaxTranslateX;
-          setTrackData(endTrackID!, [...endStackData, current]);
+          setTrackData(endTrackID, [...endStackData, current]);
           return;
         }
 
         current.translateX = translateX + offset;
 
-        setTrackData(endTrackID!, [...endStackData, current]);
+        setTrackData(endTrackID, [...endStackData, current]);
         return;
       }
 

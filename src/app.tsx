@@ -79,7 +79,7 @@ const App = () => {
 
   return (
     <main className="flex size-full h-screen">
-      <aside className="flex h-full w-[200px] justify-center border-r pt-9">
+      <aside className="flex h-full w-[300px] justify-center border-r pt-9">
         <AsideGrid />
       </aside>
       <section className="flex  flex-1 flex-col justify-end ">

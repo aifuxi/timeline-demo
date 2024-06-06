@@ -10,9 +10,12 @@ interface TimelineState {
   startTrackID?: string;
   endTrackID?: string;
 
+  firstMouseDownX: number;
+
   needNewTrack?: boolean;
 
   setNeedNewTrack: (v: boolean) => void;
+  setFirstMouseDownX: (n: number) => void;
 
   setTrackData: (id: string, data: ClipType[]) => void;
   setCurrentClipID: (id: string) => void;
@@ -22,6 +25,11 @@ interface TimelineState {
 
 export const useTimelineStore = create<TimelineState>()((set) => ({
   currentClipID: "",
+
+  firstMouseDownX: 0,
+  setFirstMouseDownX(n) {
+    set({ firstMouseDownX: n });
+  },
 
   setNeedNewTrack(v) {
     set({ needNewTrack: v });
